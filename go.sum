@@ -1,0 +1,4 @@
+github.com/Graylog2/go-gelf v0.0.0-20170811154226-7ebf4f536d8f h1:xMWj7GzE4gCkm8e+661/GJHDXr4h7/jt4kM1Vvr9c5k=
+github.com/Graylog2/go-gelf v0.0.0-20170811154226-7ebf4f536d8f/go.mod h1:fBaQWrftOD5CrVCUfoYGHs4X4VViTuGOXA8WloCjTY0=
+golang.org/x/exp v0.0.0-20230321023759-10a507213a29 h1:ooxPy7fPvB4kwsA2h+iBNHkAbp/4JxTSwCmvdjEYmug=
+golang.org/x/exp v0.0.0-20230321023759-10a507213a29/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=

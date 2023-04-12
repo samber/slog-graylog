@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  # https://github.com/Graylog2/docker-compose/blob/main/open-core/docker-compose.yml
+  graylog:
+    image: graylog/graylog:5.0
+    ports:
+      - "9000:9000/tcp"   # Server API
+      - "12201:12201/tcp" # GELF TCP
+      - "12201:12201/udp" # GELF UDP
