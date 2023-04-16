@@ -14,7 +14,8 @@ A [Graylog](https://www.graylog.org/) Handler for [slog](https://pkg.go.dev/gola
 
 **See also:**
 
-- [slog-multi](https://github.com/samber/slog-multi): workflows of `slog` handlers (pipeline, fanout)
+- [slog-multi](https://github.com/samber/slog-multi): workflows of `slog` handlers (pipeline, fanout, ...)
+- [slog-formatter](https://github.com/samber/slog-formatter): `slog` attribute formatting
 - [slog-datadog](https://github.com/samber/slog-datadog): A `slog` handler for `Datadog`
 - [slog-slack](https://github.com/samber/slog-slack): A `slog` handler for `Slack`
 - [slog-loki](https://github.com/samber/slog-loki): A `slog` handler for `Loki`
