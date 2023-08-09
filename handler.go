@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
+	"log/slog"
+
 	"github.com/Graylog2/go-gelf/gelf"
-	"golang.org/x/exp/slog"
 )
 
 type Option struct {

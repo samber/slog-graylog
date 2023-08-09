@@ -5,9 +5,10 @@ import (
 	"log"
 	"time"
 
+	"log/slog"
+
 	"github.com/Graylog2/go-gelf/gelf"
 	sloggraylog "github.com/samber/slog-graylog"
-	"golang.org/x/exp/slog"
 )
 
 func main() {
