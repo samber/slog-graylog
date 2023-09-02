@@ -36,6 +36,8 @@ func (o Option) NewGraylogHandler() slog.Handler {
 	}
 }
 
+var _ slog.Handler = (*GraylogHandler)(nil)
+
 type GraylogHandler struct {
 	option Option
 	attrs  []slog.Attr
