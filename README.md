@@ -57,18 +57,18 @@ GoDoc: [https://pkg.go.dev/github.com/samber/slog-graylog](https://pkg.go.dev/gi
 
 ```go
 type Option struct {
-	// log level (default: debug)
-	Level slog.Leveler
+    // log level (default: debug)
+    Level slog.Leveler
 
-	// connection to graylog
-	Writer *gelf.Writer
+    // connection to graylog
+    Writer *gelf.Writer
 
-	// optional: customize json payload builder
-	Converter Converter
+    // optional: customize json payload builder
+    Converter Converter
 
-	// optional: see slog.HandlerOptions
-	AddSource   bool
-	ReplaceAttr func(groups []string, a slog.Attr) slog.Attr
+    // optional: see slog.HandlerOptions
+    AddSource   bool
+    ReplaceAttr func(groups []string, a slog.Attr) slog.Attr
 }
 ```
 
@@ -86,21 +86,21 @@ sloggraylog.ErrorKeys = []string{"error", "err"}
 
 ```go
 import (
-	"github.com/Graylog2/go-gelf/gelf"
-	sloggraylog "github.com/samber/slog-graylog"
-	"log/slog"
+    "github.com/Graylog2/go-gelf/gelf"
+    sloggraylog "github.com/samber/slog-graylog"
+    "log/slog"
 )
 
 func main() {
     // docker-compose up -d
-	// or
-	// ncat -l 12201 -u
-	gelfWriter, err := gelf.NewWriter("localhost:12201")
-	if err != nil {
-		log.Fatalf("gelf.NewWriter: %s", err)
-	}
+    // or
+    // ncat -l 12201 -u
+    gelfWriter, err := gelf.NewWriter("localhost:12201")
+    if err != nil {
+        log.Fatalf("gelf.NewWriter: %s", err)
+    }
 
-	logger := slog.New(sloggraylog.Option{Level: slog.LevelDebug, Writer: gelfWriter}.NewGraylogHandler())
+    logger := slog.New(sloggraylog.Option{Level: slog.LevelDebug, Writer: gelfWriter}.NewGraylogHandler())
     logger = logger.
         With("environment", "dev").
         With("release", "v1.0.0")
