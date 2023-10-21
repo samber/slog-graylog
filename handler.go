@@ -66,9 +66,11 @@ func (h *GraylogHandler) Handle(ctx context.Context, record slog.Record) error {
 		return err
 	}
 
-	_, err = h.option.Writer.Write(append(bytes, byte('\n')))
+	go func() {
+		_, err = h.option.Writer.Write(append(bytes, byte('\n')))
+	}()
 
-	return err
+	return nil
 }
 
 func (h *GraylogHandler) WithAttrs(attrs []slog.Attr) slog.Handler {

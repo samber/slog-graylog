@@ -43,16 +43,16 @@ A [Graylog](https://www.graylog.org/) Handler for [slog](https://pkg.go.dev/log/
 ## 🚀 Install
 
 ```sh
-go get github.com/samber/slog-graylog
+go get github.com/samber/slog-graylog/v2
 ```
 
 **Compatibility**: go >= 1.21
 
-No breaking changes will be made to exported APIs before v2.0.0.
+No breaking changes will be made to exported APIs before v3.0.0.
 
 ## 💡 Usage
 
-GoDoc: [https://pkg.go.dev/github.com/samber/slog-graylog](https://pkg.go.dev/github.com/samber/slog-graylog)
+GoDoc: [https://pkg.go.dev/github.com/samber/slog-graylog/v2](https://pkg.go.dev/github.com/samber/slog-graylog/v2)
 
 ### Handler options
 
@@ -88,7 +88,7 @@ sloggraylog.ErrorKeys = []string{"error", "err"}
 ```go
 import (
     "github.com/Graylog2/go-gelf/gelf"
-    sloggraylog "github.com/samber/slog-graylog"
+    sloggraylog "github.com/samber/slog-graylog/v2"
     "log/slog"
 )
 

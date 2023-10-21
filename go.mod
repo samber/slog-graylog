@@ -1,4 +1,4 @@
-module github.com/samber/slog-graylog
+module github.com/samber/slog-graylog/v2
 
 go 1.21
 
