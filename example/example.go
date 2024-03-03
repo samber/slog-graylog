@@ -20,6 +20,8 @@ func main() {
 		log.Fatalf("gelf.NewWriter: %s", err)
 	}
 
+	gelfWriter.CompressionType = gelf.CompressNone // for debugging only
+
 	logger := slog.New(sloggraylog.Option{Level: slog.LevelDebug, Writer: gelfWriter}.NewGraylogHandler())
 	logger = logger.With("release", "v1.0.0")
 
@@ -33,4 +35,6 @@ func main() {
 		With("environment", "dev").
 		With("error", fmt.Errorf("an error")).
 		Error("A message")
+
+	time.Sleep(1 * time.Second)
 }

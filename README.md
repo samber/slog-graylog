@@ -68,8 +68,6 @@ type Option struct {
 
     // optional: customize json payload builder
     Converter Converter
-	// optional: custom marshaler
-	Marshaler func(v any) ([]byte, error)
 
     // optional: see slog.HandlerOptions
     AddSource   bool
@@ -77,14 +75,14 @@ type Option struct {
 }
 ```
 
-Attributes will be injected in log payload.
+Attributes will be injected in log "extra".
 
 Other global parameters:
 
 ```go
 sloggraylog.SourceKey = "source"
-sloggraylog.ContextKey = "extra"
 sloggraylog.ErrorKeys = []string{"error", "err"}
+sloggraylog.LogLevels = map[slog.Level]int32{...}
 ```
 
 ### Example
@@ -104,6 +102,8 @@ func main() {
     if err != nil {
         log.Fatalf("gelf.NewWriter: %s", err)
     }
+
+	gelfWriter.CompressionType = gelf.CompressNone  // for debugging only
 
     logger := slog.New(sloggraylog.Option{Level: slog.LevelDebug, Writer: gelfWriter}.NewGraylogHandler())
     logger = logger.
@@ -135,14 +135,14 @@ Output:
 ```json
 {
     "timestamp":"2023-04-10T14:00:0.000000+00:00",
-    "level":"ERROR",
+    "level":3,
     "message":"caramba!",
-    "error":{
-        "error":"could not count users",
-        "kind":"*errors.errorString",
-        "stack":null
-    },
     "extra":{
+        "error":{
+            "error":"could not count users",
+            "kind":"*errors.errorString",
+            "stack":null
+        },
         "environment":"dev",
         "release":"v1.0.0",
         "category":"sql",
@@ -154,9 +154,8 @@ Output:
 
 {
     "timestamp":"2023-04-10T14:00:0.000000+00:00",
-    "level":"INFO",
+    "level":6,
     "message":"user registration",
-    "error":null,
     "extra":{
         "environment":"dev",
         "release":"v1.0.0",

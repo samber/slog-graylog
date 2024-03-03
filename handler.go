@@ -2,7 +2,9 @@ package sloggraylog
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
+	"os"
+	"strings"
 
 	"log/slog"
 
@@ -19,12 +21,13 @@ type Option struct {
 
 	// optional: customize json payload builder
 	Converter Converter
-	// optional: custom marshaler
-	Marshaler func(v any) ([]byte, error)
 
 	// optional: see slog.HandlerOptions
 	AddSource   bool
 	ReplaceAttr func(groups []string, a slog.Attr) slog.Attr
+
+	// internal
+	hostname string
 }
 
 func (o Option) NewGraylogHandler() slog.Handler {
@@ -35,13 +38,16 @@ func (o Option) NewGraylogHandler() slog.Handler {
 	if o.Writer == nil {
 		panic("missing graylog connections")
 	}
+	if o.Writer.Facility == "" {
+		o.Writer.Facility = fmt.Sprintf("%s/%s", name, version)
+	}
 
 	if o.Converter == nil {
 		o.Converter = DefaultConverter
 	}
 
-	if o.Marshaler == nil {
-		o.Marshaler = json.Marshal
+	if hostname, err := os.Hostname(); err == nil {
+		o.hostname = hostname
 	}
 
 	return &GraylogHandler{
@@ -64,15 +70,21 @@ func (h *GraylogHandler) Enabled(_ context.Context, level slog.Level) bool {
 }
 
 func (h *GraylogHandler) Handle(ctx context.Context, record slog.Record) error {
-	message := h.option.Converter(h.option.AddSource, h.option.ReplaceAttr, h.attrs, h.groups, &record)
+	extra := h.option.Converter(h.option.AddSource, h.option.ReplaceAttr, h.attrs, h.groups, &record)
 
-	bytes, err := h.option.Marshaler(message)
-	if err != nil {
-		return err
+	msg := &gelf.Message{
+		Version:  "1.1",
+		Host:     h.option.hostname,
+		Short:    short(&record),
+		Full:     strings.TrimSpace(record.Message),
+		TimeUnix: float64(record.Time.Unix()),
+		Level:    LogLevels[record.Level],
+		Facility: h.option.Writer.Facility,
+		Extra:    extra,
 	}
 
 	go func() {
-		_, _ = h.option.Writer.Write(append(bytes, byte('\n')))
+		_ = h.option.Writer.WriteMessage(msg)
 	}()
 
 	return nil
@@ -92,4 +104,13 @@ func (h *GraylogHandler) WithGroup(name string) slog.Handler {
 		attrs:  h.attrs,
 		groups: append(h.groups, name),
 	}
+}
+
+func short(record *slog.Record) string {
+	msg := strings.TrimSpace(record.Message)
+	if i := strings.IndexRune(msg, '\n'); i > 0 {
+		return msg[:i]
+	}
+
+	return msg
 }
