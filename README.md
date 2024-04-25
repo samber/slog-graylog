@@ -79,6 +79,8 @@ type Option struct {
 
     // optional: customize json payload builder
     Converter Converter
+    // optional: fetch attributes from context
+    AttrFromContext []func(ctx context.Context) []slog.Attr
 
     // optional: see slog.HandlerOptions
     AddSource   bool
@@ -175,6 +177,41 @@ Output:
             "created_at":"2023-04-10T14:00:0.000000+00:00"
         }
     }
+}
+```
+
+### Tracing
+
+Import the samber/slog-otel library.
+
+```go
+import (
+	sloggraylog "github.com/samber/slog-graylog"
+	slogotel "github.com/samber/slog-otel"
+	"go.opentelemetry.io/otel/sdk/trace"
+)
+
+func main() {
+	tp := trace.NewTracerProvider(
+		trace.WithSampler(trace.AlwaysSample()),
+	)
+	tracer := tp.Tracer("hello/world")
+
+	ctx, span := tracer.Start(context.Background(), "foo")
+	defer span.End()
+
+	span.AddEvent("bar")
+
+	logger := slog.New(
+		sloggraylog.Option{
+			// ...
+			AttrFromContext: []func(ctx context.Context) []slog.Attr{
+				slogotel.ExtractOtelAttrFromContext([]string{"tracing"}, "trace_id", "span_id"),
+			},
+		}.NewGraylogHandler(),
+	)
+
+	logger.ErrorContext(ctx, "a message")
 }
 ```
 

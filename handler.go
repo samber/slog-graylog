@@ -21,6 +21,8 @@ type Option struct {
 
 	// optional: customize json payload builder
 	Converter Converter
+	// optional: fetch attributes from context
+	AttrFromContext []func(ctx context.Context) []slog.Attr
 
 	// optional: see slog.HandlerOptions
 	AddSource   bool
@@ -44,6 +46,10 @@ func (o Option) NewGraylogHandler() slog.Handler {
 
 	if o.Converter == nil {
 		o.Converter = DefaultConverter
+	}
+
+	if o.AttrFromContext == nil {
+		o.AttrFromContext = []func(ctx context.Context) []slog.Attr{}
 	}
 
 	if hostname, err := os.Hostname(); err == nil {
@@ -70,7 +76,8 @@ func (h *GraylogHandler) Enabled(_ context.Context, level slog.Level) bool {
 }
 
 func (h *GraylogHandler) Handle(ctx context.Context, record slog.Record) error {
-	extra := h.option.Converter(h.option.AddSource, h.option.ReplaceAttr, h.attrs, h.groups, &record)
+	fromContext := slogcommon.ContextExtractor(ctx, h.option.AttrFromContext)
+	extra := h.option.Converter(h.option.AddSource, h.option.ReplaceAttr, append(h.attrs, fromContext...), h.groups, &record)
 
 	msg := &gelf.Message{
 		Version:  "1.1",
