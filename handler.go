@@ -107,6 +107,11 @@ func (h *GraylogHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 }
 
 func (h *GraylogHandler) WithGroup(name string) slog.Handler {
+	// https://cs.opensource.google/go/x/exp/+/46b07846:slog/handler.go;l=247
+	if name == "" {
+		return h
+	}
+
 	return &GraylogHandler{
 		option: h.option,
 		attrs:  h.attrs,
