@@ -84,7 +84,7 @@ func (h *GraylogHandler) Handle(ctx context.Context, record slog.Record) error {
 		Host:     h.option.hostname,
 		Short:    short(&record),
 		Full:     strings.TrimSpace(record.Message),
-		TimeUnix: float64(record.Time.Unix()),
+		TimeUnix: float64(record.Time.UnixNano()) / 1e9,
 		Level:    LogLevels[record.Level],
 		Facility: h.option.Writer.Facility,
 		Extra:    extra,
